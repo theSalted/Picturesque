@@ -3,7 +3,10 @@ using UnityEngine;
 public class Extractable : MonoBehaviour, Interactable
 {
     [SerializeField] private bool _isInteractable = true;
+    private Collider collider;
     private LayerMask _layerMask;
+    private bool _isTrigger;
+    
     public bool isInteractable {
         get {
             return _isInteractable;
@@ -15,6 +18,9 @@ public class Extractable : MonoBehaviour, Interactable
 
     void Awake() {
         _layerMask = gameObject.layer;
+        collider = GetComponent<Collider>();
+        _isTrigger = collider.isTrigger;
+        collider.isTrigger = false;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -34,11 +40,12 @@ public class Extractable : MonoBehaviour, Interactable
     }
 
     public void OnStare() {
-        _layerMask = gameObject.layer;
         gameObject.layer = LayerMask.NameToLayer("Default");
+        collider.isTrigger = _isTrigger;
     }
     
     public void OnStareExit() {
-        gameObject.layer = LayerMask.NameToLayer("Stencil");
+        gameObject.layer = _layerMask;
+        collider.isTrigger = false;
     } 
 }
