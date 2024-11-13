@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 12ff2fe112f97c5499c0707d728b7c5f
+timeCreated: 1518380242
+licenseType: Store
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111787
+  packageName: Modular First Person Player
+  packageVersion: 1.0.2.7
+  assetPath: Assets/MFPP/Scenes/Player Example.unity
+  uploadId: 684870

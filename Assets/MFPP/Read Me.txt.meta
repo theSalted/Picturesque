@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 12d51b55a1083cd4ebd0103348385ce0
+timeCreated: 1519064047
+licenseType: Store
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111787
+  packageName: Modular First Person Player
+  packageVersion: 1.0.2.7
+  assetPath: Assets/MFPP/Read Me.txt
+  uploadId: 684870

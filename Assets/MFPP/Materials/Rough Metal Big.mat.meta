@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 00c12e3f53645024bacae149a1561129
+timeCreated: 1517160645
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111787
+  packageName: Modular First Person Player
+  packageVersion: 1.0.2.7
+  assetPath: Assets/MFPP/Materials/Rough Metal Big.mat
+  uploadId: 684870

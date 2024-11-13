@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 9d0222a9fd2867243b9fe441ea072935
+timeCreated: 1519065126
+licenseType: Store
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111787
+  packageName: Modular First Person Player
+  packageVersion: 1.0.2.7
+  assetPath: Assets/MFPP/Scenes/Arcade Player Example.unity
+  uploadId: 684870
