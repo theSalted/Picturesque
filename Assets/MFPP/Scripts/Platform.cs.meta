@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: f86231a21f38dcf4c915e16beaedb10f
+timeCreated: 1518233924
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111787
+  packageName: Modular First Person Player
+  packageVersion: 1.0.2.7
+  assetPath: Assets/MFPP/Scripts/Platform.cs
+  uploadId: 684870

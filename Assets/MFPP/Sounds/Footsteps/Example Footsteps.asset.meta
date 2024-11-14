@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 4af1df16dda0cd748b3827653c6f8d67
+timeCreated: 1517182609
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111787
+  packageName: Modular First Person Player
+  packageVersion: 1.0.2.7
+  assetPath: Assets/MFPP/Sounds/Footsteps/Example Footsteps.asset
+  uploadId: 684870
