@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CameraRayController : MonoBehaviour
 {
+    public static CameraRayController Instance { get; private set; }
+    
     [Header("Ray Settings")]
-    public InputSystem playerInputs;
+    public InputSystemActions playerInputs;
     public float rayLength = 5f;
 
     [Header("Reticle Assets")]
@@ -25,6 +28,7 @@ public class CameraRayController : MonoBehaviour
     /// <param name="start"> True if the player started aiming at an interactable object, false if the player stopped aiming at an interactable object. </param>
     public delegate void OnInteractable(bool start, string label);
     public static event OnInteractable OnInteractableEvent;
+
     private string _interactableLabel = "Interact";
 
     public string interactableLabel {
@@ -59,12 +63,19 @@ public class CameraRayController : MonoBehaviour
             }
         }
     }
-    
+
+    [HideInInspector]
+    public bool isPlaceable = false;
+    public Vector3 placePosition = new Vector3(0, 0, 0);
+    public Vector3 normal = new Vector3(0, 0, 0);
 
     void Awake()
     {
+        EnsureSingletonInstance();
         player = GameObject.FindGameObjectWithTag("Player");
-        playerInputs = new InputSystem();
+        playerInputs = new InputSystemActions();
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+        placePosition = ray.origin + ray.direction * rayLength / 2;
     }
 
     void OnEnable()
@@ -73,7 +84,7 @@ public class CameraRayController : MonoBehaviour
 
         interact.Enable();
 
-        interact.performed += OnInteract;
+        interact.performed += OnInteractCallback;
     }
 
     void OnDisable()
@@ -90,18 +101,57 @@ public class CameraRayController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         ResetReticle();
-        DetectIneractable();
+        DetectIneractable(ray);
+        DetectPlaceable(ray);
         Debug.DrawRay(transform.position, transform.forward * rayLength, Color.red);
     }
 
-    public void OnInteract(InputAction.CallbackContext context)
+    public void OnInteractCallback(InputAction.CallbackContext context)
     {
-        Interact(null);
-    }  
+        CheckInteract(null);
+    }
 
-    private void DetectIneractable() {
-        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+    private void DetectPlaceable(Ray ray) {
+        int allLayersMask = ~0;
+        RaycastHit hitData;
+        
+        if (Physics.Raycast(ray, out hitData, rayLength, allLayersMask))
+        {
+            isPlaceable = true;
+            placePosition = hitData.point;
+            normal = hitData.normal;
+            Color debugColor = Color.blue;
+
+            interactableLabel = "Place";
+            
+            if (hitData.collider.gameObject.tag == "Unplaceable") {
+                isPlaceable = false;
+                placePosition = ray.origin + ray.direction * rayLength / 2;
+                normal = new Vector3(0, 0, 0);
+                
+                interactableLabel = "Can't Place Here";
+                debugColor = Color.black;
+            }
+            
+            // Draw a small sphere at the hit point
+            Debug.DrawRay(hitData.point, hitData.normal * 0.5f, debugColor, 0.1f);
+            
+            // Optionally, draw the impact point
+            Debug.DrawLine(hitData.point - Vector3.up * 0.05f, hitData.point + Vector3.up * 0.05f, debugColor, 0.1f);
+            Debug.DrawLine(hitData.point - Vector3.left * 0.05f, hitData.point + Vector3.left * 0.05f, debugColor, 0.1f);
+            Debug.DrawLine(hitData.point - Vector3.forward * 0.05f, hitData.point + Vector3.forward * 0.05f, debugColor, 0.1f);
+        } else {
+            isPlaceable = false;
+            placePosition = ray.origin + ray.direction * rayLength / 2;
+            normal = new Vector3(0, 0, 0);
+
+            interactableLabel = "Must Be Place On Ground";
+        }
+    } 
+
+    private void DetectIneractable(Ray ray) {
         RaycastHit hitData;
         if (Physics.Raycast(ray, out hitData, rayLength)) 
         {
@@ -145,7 +195,7 @@ public class CameraRayController : MonoBehaviour
         }
     }
 
-    private void Interact(InputAction inputAction) {
+    private void CheckInteract(InputAction inputAction) {
         Ray ray =  Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         RaycastHit hitData;
 
@@ -174,5 +224,13 @@ public class CameraRayController : MonoBehaviour
     private void ResetReticle() {
         reticleInteractiveUI.SetActive(false);
         reticleNormalUI.SetActive(true);
+    }
+
+    private void EnsureSingletonInstance() {
+        if (Instance == null) {
+            Instance = this;
+        } else if (Instance != this) {
+            Debug.LogError("There are multiple instances of the CameraRayController class.");
+        }
     }
 }

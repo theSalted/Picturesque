@@ -16,6 +16,11 @@ public interface Interactable {
         set;
     }
 
+    Outline outline {
+        get;
+        set;
+    }
+
     /// <summary>
     /// Is called when object is intreacted with.
     /// </summary>
