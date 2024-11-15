@@ -72,6 +72,10 @@ public class Extractable : MonoBehaviour, Interactable
         }
     }
 
+    public void OnStareEnter() {
+        
+    }
+
     public void OnStare() {
         // Since This is can be called via interface, thus bypassing rendering loop, we need to check if the component is enabled
         if (this.enabled) {

@@ -92,15 +92,15 @@ public class Movable : MonoBehaviour, Interactable
     {
         if (isBeingMoved)
         {
-            Vector3 targetPosition = CameraRayController.Instance.placePosition;
+            Vector3 targetPosition = PlaceableDetector.Instance.placePosition;
 
             // Always move the object to the target position
             Vector3 adjustedPosition;
 
-            if (CameraRayController.Instance.normal == Vector3.zero)
+            if (PlaceableDetector.Instance.normal == Vector3.zero)
             {
                 // No valid hit, skip collision avoidance
-                CameraRayController.Instance.isPlaceable = false;
+                PlaceableDetector.Instance.isPlaceable = false;
                 adjustedPosition = targetPosition;
             }
             else
@@ -113,7 +113,7 @@ public class Movable : MonoBehaviour, Interactable
             transform.position = Vector3.Lerp(transform.position, adjustedPosition, lerpSpeed * Time.deltaTime);
 
             // Update the outline color based on the isPlaceable state
-            if (CameraRayController.Instance.isPlaceable)
+            if (PlaceableDetector.Instance.isPlaceable)
             {
                 outline.OutlineColor = new Color(0.4196f, 0.8706f, 0.4392f); // green color
             }
@@ -129,12 +129,17 @@ public class Movable : MonoBehaviour, Interactable
         if (isBeingMoved && this.enabled)
         {
             // Try to place the object
-            if (CameraRayController.Instance.isPlaceable)
+            if (PlaceableDetector.Instance.isPlaceable)
             {
                 // Place the object and stop moving
                 isBeingMoved = false;
             }
         }
+    }
+
+    public void OnStareEnter()
+    {
+        
     }
 
     public void OnInteract()
@@ -197,7 +202,7 @@ public class Movable : MonoBehaviour, Interactable
         if (objectCollider != null)
         {
             // Get the normal of the hit surface
-            Vector3 surfaceNormal = CameraRayController.Instance.normal;
+            Vector3 surfaceNormal = PlaceableDetector.Instance.normal;
 
             if (surfaceNormal == Vector3.zero)
             {
@@ -236,12 +241,12 @@ public class Movable : MonoBehaviour, Interactable
             if (iterations >= maxIterations)
             {
                 // Collision could not be avoided
-                CameraRayController.Instance.isPlaceable = false;
+                PlaceableDetector.Instance.isPlaceable = false;
             }
             else
             {
                 // Position is placeable
-                CameraRayController.Instance.isPlaceable = true;
+                PlaceableDetector.Instance.isPlaceable = true;
             }
         }
 
@@ -287,7 +292,7 @@ public class Movable : MonoBehaviour, Interactable
             // Optional: Draw a gizmo to show where the overlap box is checking
             Gizmos.color = Color.red;
             Vector3 objectSize = collider != null ? collider.bounds.size : Vector3.one;
-            Gizmos.DrawWireCube(CameraRayController.Instance.placePosition, objectSize);
+            Gizmos.DrawWireCube(PlaceableDetector.Instance.placePosition, objectSize);
         }
     }
 }
