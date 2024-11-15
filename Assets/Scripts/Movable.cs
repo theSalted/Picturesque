@@ -158,19 +158,21 @@ public class Movable : MonoBehaviour, Interactable
     {
         if (!isMovingInitialized)
         {
-
+            meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             gameObject.layer = LayerMask.NameToLayer("Overlay");
             outline.enabled = true;
             collider.isTrigger = true; // Set collider to trigger during movement
             // Do not disable the collider to keep bounds valid
             // collider.enabled = false; // This line is removed
             isMovingInitialized = true;
+            Destroy(gameObject.GetComponent<FallingController>());
             InteractEnable();
         }
     }
 
     private void StopMoving()
     {
+        meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
         // Restore original states
         gameObject.layer = LayerMask.NameToLayer("Default");
         outline.OutlineColor = originalOutlineColor;
@@ -178,6 +180,7 @@ public class Movable : MonoBehaviour, Interactable
         collider.isTrigger = false;
         collider.enabled = true;
         isMovingInitialized = false;
+        gameObject.AddComponent<FallingController>();
         InteractDisable();
     }
 
