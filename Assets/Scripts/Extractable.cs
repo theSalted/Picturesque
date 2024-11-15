@@ -59,14 +59,17 @@ public class Extractable : MonoBehaviour, Interactable
     }
 
     public void OnInteract() {
-        // Create a new Movable component
-        Movable movable = gameObject.AddComponent<Movable>();
-        movable.isBeingMoved = true;
-        movable._isTrigger = _isTrigger;
-        movable._layerMask = _layerMask;
-        gameObject.layer = LayerMask.NameToLayer("Overlay");
-        // Disable the Extractable component
-        this.enabled = false;
+        if (this.enabled) {
+            // Create a new Movable component
+            Movable movable = gameObject.AddComponent<Movable>();
+            movable.isBeingMoved = true;
+            movable._isTrigger = _isTrigger;
+            movable._layerMask = _layerMask;
+            gameObject.layer = LayerMask.NameToLayer("Overlay");
+            // Disable the Extractable component
+            // Remove the Extractable component
+            Destroy(this);
+        }
     }
 
     public void OnStare() {

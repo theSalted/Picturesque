@@ -21,6 +21,8 @@ public class Movable : MonoBehaviour, Interactable
     private Vector3 originalPosition;
 
     private bool isMovingInitialized = false;
+    public InputSystemActions playerInputs;
+    private InputAction interact;
     public float lerpSpeed = 10f; // Speed of interpolation for smooth movement
 
     public Outline outline
@@ -35,7 +37,7 @@ public class Movable : MonoBehaviour, Interactable
         set { _isInteractable = value; }
     }
 
-    private bool _isBeingMoved = false;
+    public bool _isBeingMoved = false;
     public bool isBeingMoved
     {
         get { return _isBeingMoved; }
@@ -66,6 +68,7 @@ public class Movable : MonoBehaviour, Interactable
         {
             outline = gameObject.AddComponent<Outline>();
         }
+        playerInputs = new InputSystemActions();
 
         // Save original states
         originalOutlineColor = outline.OutlineColor;
@@ -75,14 +78,36 @@ public class Movable : MonoBehaviour, Interactable
         originalPosition = transform.position;
     }
 
+    void OnEnable()
+    {
+        InteractEnable();   
+    }
+
+    void OnDisable()
+    {
+        InteractDisable();
+    }
+
     void Update()
     {
         if (isBeingMoved)
         {
             Vector3 targetPosition = CameraRayController.Instance.placePosition;
 
-            // Adjust targetPosition to account for collisions and bounding box
-            Vector3 adjustedPosition = GetAdjustedPosition(targetPosition);
+            // Always move the object to the target position
+            Vector3 adjustedPosition;
+
+            if (CameraRayController.Instance.normal == Vector3.zero)
+            {
+                // No valid hit, skip collision avoidance
+                CameraRayController.Instance.isPlaceable = false;
+                adjustedPosition = targetPosition;
+            }
+            else
+            {
+                // Valid hit, perform collision avoidance
+                adjustedPosition = GetAdjustedPosition(targetPosition);
+            }
 
             // Lerp towards the adjusted target position
             transform.position = Vector3.Lerp(transform.position, adjustedPosition, lerpSpeed * Time.deltaTime);
@@ -101,51 +126,59 @@ public class Movable : MonoBehaviour, Interactable
 
     public void OnInteractCallback(InputAction.CallbackContext context)
     {
-        
-    }
-
-    public void OnInteract()
-    {
-        Debug.Log("On Interact");
-        if (isBeingMoved)
+        if (isBeingMoved && this.enabled)
         {
             // Try to place the object
             if (CameraRayController.Instance.isPlaceable)
             {
-                Debug.Log("Placed");
                 // Place the object and stop moving
                 isBeingMoved = false;
             }
         }
-        else
+    }
+
+    public void OnInteract()
+    {
+        if (!isBeingMoved && this.enabled)
         {
-            Debug.Log("Start Moving");
             // Start moving the object
             isBeingMoved = true;
         }
+    }
+
+    public void OnStare() {
+
+    }
+
+    public void OnStareExit() {
+
     }
 
     private void StartMoving()
     {
         if (!isMovingInitialized)
         {
+
             gameObject.layer = LayerMask.NameToLayer("Overlay");
             outline.enabled = true;
-            collider.isTrigger = false;
-            collider.enabled = false;
+            collider.isTrigger = true; // Set collider to trigger during movement
+            // Do not disable the collider to keep bounds valid
+            // collider.enabled = false; // This line is removed
             isMovingInitialized = true;
+            InteractEnable();
         }
     }
 
     private void StopMoving()
     {
         // Restore original states
-        gameObject.layer = originalLayer;
+        gameObject.layer = LayerMask.NameToLayer("Default");
         outline.OutlineColor = originalOutlineColor;
         outline.enabled = false;
-        collider.isTrigger = originalColliderTrigger;
-        collider.enabled = originalColliderEnabled;
+        collider.isTrigger = false;
+        collider.enabled = true;
         isMovingInitialized = false;
+        InteractDisable();
     }
 
     private Vector3 GetAdjustedPosition(Vector3 targetPosition)
@@ -153,23 +186,52 @@ public class Movable : MonoBehaviour, Interactable
         Collider objectCollider = GetComponent<Collider>();
         if (objectCollider != null)
         {
+            // Get the normal of the hit surface
+            Vector3 surfaceNormal = CameraRayController.Instance.normal;
+
+            if (surfaceNormal == Vector3.zero)
+            {
+                // No valid surface normal, skip collision avoidance
+                return targetPosition;
+            }
+
+            // Ensure the normal is normalized
+            surfaceNormal = surfaceNormal.normalized;
+
+            // Get the collider's bounds extents
+            Vector3 boundsExtents = objectCollider.bounds.extents;
+
+            // Compute the extent along the normal
+            float extentAlongNormal =
+                Mathf.Abs(boundsExtents.x * surfaceNormal.x) +
+                Mathf.Abs(boundsExtents.y * surfaceNormal.y) +
+                Mathf.Abs(boundsExtents.z * surfaceNormal.z);
+
+            // Adjust the target position along the normal to prevent sinking into the surface
+            targetPosition += surfaceNormal * extentAlongNormal;
+
             Vector3 objectSize = objectCollider.bounds.size;
             Vector3 halfSize = objectSize / 2f;
-            int maxIterations = 5; // Maximum number of upward adjustments
+            int maxIterations = 10; // Maximum number of adjustments
             int iterations = 0;
-            float checkDistance = 0.1f; // Distance to move up each iteration
+            float checkDistance = 0.1f; // Distance to move along normal each iteration
 
             while (IsColliding(targetPosition, halfSize) && iterations < maxIterations)
             {
-                // Move the target position up by checkDistance
-                targetPosition += Vector3.up * checkDistance;
+                // Move the target position along the normal by checkDistance
+                targetPosition += surfaceNormal * checkDistance;
                 iterations++;
             }
 
             if (iterations >= maxIterations)
             {
-                // Debug.LogWarning("Max iterations reached, possible collision could not be avoided.");
+                // Collision could not be avoided
                 CameraRayController.Instance.isPlaceable = false;
+            }
+            else
+            {
+                // Position is placeable
+                CameraRayController.Instance.isPlaceable = true;
             }
         }
 
@@ -178,7 +240,7 @@ public class Movable : MonoBehaviour, Interactable
 
     private bool IsColliding(Vector3 position, Vector3 halfSize)
     {
-        // Check for any colliders in the default layer using OverlapBox
+        // Check for any colliders using OverlapBox
         Collider[] colliders = Physics.OverlapBox(position, halfSize, Quaternion.identity);
 
         // Exclude this object's own collider
@@ -191,6 +253,21 @@ public class Movable : MonoBehaviour, Interactable
         }
 
         return false;
+    }
+
+    void InteractEnable()
+    {
+        interact = playerInputs.Player.Interact;
+
+        interact.Enable();
+
+        interact.performed += OnInteractCallback;
+    }
+
+    void InteractDisable()
+    {
+        interact.performed -= OnInteractCallback; // Unsubscribe from the event
+        interact.Disable();
     }
 
     void OnDrawGizmos()

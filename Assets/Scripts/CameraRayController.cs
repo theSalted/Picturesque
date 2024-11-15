@@ -89,6 +89,7 @@ public class CameraRayController : MonoBehaviour
 
     void OnDisable()
     {
+        interact.performed -= OnInteractCallback; // Unsubscribe from the event
         interact.Disable();
     }
 
@@ -114,10 +115,10 @@ public class CameraRayController : MonoBehaviour
     }
 
     private void DetectPlaceable(Ray ray) {
-        int allLayersMask = ~0;
+        int layerMask = ~LayerMask.GetMask("Overlay");
         RaycastHit hitData;
         
-        if (Physics.Raycast(ray, out hitData, rayLength, allLayersMask))
+        if (Physics.Raycast(ray, out hitData, rayLength, layerMask))
         {
             isPlaceable = true;
             placePosition = hitData.point;

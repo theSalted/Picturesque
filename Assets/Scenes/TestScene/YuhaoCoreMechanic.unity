@@ -825,7 +825,7 @@ GameObject:
   - component: {fileID: 870912627}
   - component: {fileID: 870912626}
   - component: {fileID: 870912630}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -933,6 +933,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 124b4b5e4ecde4c74ad386c1d7b9a10b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 0
   _isTrigger: 0
   _isInteractable: 1
 --- !u!1 &874605735
