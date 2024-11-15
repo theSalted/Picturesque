@@ -84,7 +84,6 @@ public class Extractable : MonoBehaviour, Interactable
     public void OnStareExit() {
         // Since This is can be called via interface, thus bypassing rendering loop, we need to check if the component is enabled
         if (this.enabled)  {
-            Debug.Log("On Stare Exit");
             gameObject.layer = LayerMask.NameToLayer("Stencil");;
             collider.isTrigger = true;
             outline.enabled = false;

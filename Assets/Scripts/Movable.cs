@@ -147,12 +147,19 @@ public class Movable : MonoBehaviour, Interactable
     }
 
     public void OnStare() {
-
+        // Since This is can be called via interface, thus bypassing rendering loop, we need to check if the component is enabled
+        if (this.enabled && !isBeingMoved) {
+            outline.enabled = true;
+        }
+        // collider.isTrigger = _isTrigger;
     }
-
+    
     public void OnStareExit() {
-
-    }
+        // Since This is can be called via interface, thus bypassing rendering loop, we need to check if the component is enabled
+        if (this.enabled && !isBeingMoved)  {
+            outline.enabled = false;
+        }
+    } 
 
     private void StartMoving()
     {
