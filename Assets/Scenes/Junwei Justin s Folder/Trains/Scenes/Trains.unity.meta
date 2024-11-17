@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e77f2d186a5170c4f846cc49837bccdd
+timeCreated: 1446038123
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 48914
+  packageName: Abandoned Trains
+  packageVersion: 1.0
+  assetPath: Assets/Trains/Scenes/Trains.unity
+  uploadId: 89421

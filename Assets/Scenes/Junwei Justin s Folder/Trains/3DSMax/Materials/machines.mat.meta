@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3fa64a9dc21998c458fdb3ddda0db403
+timeCreated: 1445957754
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 48914
+  packageName: Abandoned Trains
+  packageVersion: 1.0
+  assetPath: Assets/Trains/3DSMax/Materials/machines.mat
+  uploadId: 89421
