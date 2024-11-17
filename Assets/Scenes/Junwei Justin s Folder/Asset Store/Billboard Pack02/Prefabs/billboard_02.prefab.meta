@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: df4ab6e3c234dbd42a5e438a5d0cd902
+timeCreated: 1527182263
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 56557
+  packageName: Modular billboard pack - Part 2
+  packageVersion: 1.0
+  assetPath: Assets/Asset Store/Billboard Pack02/Prefabs/billboard_02.prefab
+  uploadId: 247839
