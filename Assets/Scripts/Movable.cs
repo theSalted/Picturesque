@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -24,6 +25,8 @@ public class Movable : MonoBehaviour, Interactable
     public InputSystemActions playerInputs;
     private InputAction interact;
     public float lerpSpeed = 10f; // Speed of interpolation for smooth movement
+
+    public List<Movable> neighborMovable = new List<Movable>();
 
     public Outline outline
     {
@@ -170,7 +173,11 @@ public class Movable : MonoBehaviour, Interactable
     {
         if (!isMovingInitialized)
         {
-            meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            if (meshRenderer != null)
+            {
+                meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            }
+            PlayerManager.Instance.inventory = gameObject;
             gameObject.layer = LayerMask.NameToLayer("Overlay");
             outline.enabled = true;
             collider.isTrigger = true; // Set collider to trigger during movement
@@ -179,13 +186,23 @@ public class Movable : MonoBehaviour, Interactable
             isMovingInitialized = true;
             Destroy(gameObject.GetComponent<FallingController>());
             InteractEnable();
+            if (neighborMovable.Count > 0)
+            {
+                foreach (Movable movable in neighborMovable)
+                {
+                    movable.gameObject.AddComponent<FallingController>();
+                }
+            }
         }
     }
 
     private void StopMoving()
     {
-        meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+        if (meshRenderer != null) {
+            meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+        }
         // Restore original states
+        PlayerManager.Instance.inventory = null;
         gameObject.layer = LayerMask.NameToLayer("Default");
         outline.OutlineColor = originalOutlineColor;
         outline.enabled = false;
@@ -293,6 +310,24 @@ public class Movable : MonoBehaviour, Interactable
             Gizmos.color = Color.red;
             Vector3 objectSize = collider != null ? collider.bounds.size : Vector3.one;
             Gizmos.DrawWireCube(PlaceableDetector.Instance.placePosition, objectSize);
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        Movable movable = collision.gameObject.GetComponent<Movable>();
+        if (movable != null)
+        {
+            neighborMovable.Add(movable);
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        Movable movable = collision.gameObject.GetComponent<Movable>();
+        if (movable != null)
+        {
+            neighborMovable.Remove(movable);
         }
     }
 }

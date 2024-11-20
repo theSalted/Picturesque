@@ -43,6 +43,10 @@ public class FallingController : MonoBehaviour
     {
         gracePeriod -= Time.deltaTime;
         //  Monitor the object's velocity, when it stops moving, destroy it
+        if (rb == null) {
+            Destroy(this);
+            return;
+        }
         if (rb.linearVelocity.magnitude < 0.1f)
         {
             if (gracePeriod <= 0) {
