@@ -10,6 +10,7 @@ public class InteractableDetector : MonoBehaviour
     public static event Action<GameObject> OnInteractedWithItemEvent;
 
     private HashSet<GameObject> staredObjects = new HashSet<GameObject>();
+
     private bool _isInteractable = false;
 
     public bool isInteractable
@@ -82,6 +83,8 @@ public class InteractableDetector : MonoBehaviour
 
     private void DetectInteractable(Ray ray)
     {
+        if (!enabled) { return; }
+        
         RaycastHit hitData;
         if (Physics.Raycast(ray, out hitData, CameraRayController.Instance.rayLength))
         {
@@ -123,6 +126,8 @@ public class InteractableDetector : MonoBehaviour
 
     private void OnStareExit()
     {
+        if (!enabled) { return; }
+
         if (staredObjects.Count != 0)
         {
             foreach (var obj in staredObjects)
