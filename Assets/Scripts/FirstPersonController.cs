@@ -21,6 +21,11 @@ namespace StarterAssets
 		[Tooltip("Acceleration and deceleration")]
 		public float SpeedChangeRate = 10.0f;
 
+		[Header("Climbing")]
+        [Tooltip("Speed for climbing up or down")]
+        public float ClimbSpeed = 3.0f;
+        private bool isClimbing = false;
+
 		[Space(10)]
 		[Tooltip("The height the player can jump")]
 		public float JumpHeight = 1.2f;
@@ -112,9 +117,84 @@ namespace StarterAssets
 
 		private void Update()
 		{
-			JumpAndGravity();
-			GroundedCheck();
-			Move();
+			if (isClimbing)
+            {
+                Climb();
+            }
+			else
+			{
+				JumpAndGravity();
+				GroundedCheck();
+				Move();
+			}
+		}
+
+		private void OnControllerColliderHit(ControllerColliderHit hit)
+		{
+			// Check if the player touches a climbable object, don't reset isClimbing if grounded
+			if (hit.collider.CompareTag("Climbable") && Grounded)
+			{
+				if (!isClimbing) // Only set isClimbing to true if it's not already climbing
+				{
+					Debug.Log("able to climb");
+					isClimbing = true;
+					_verticalVelocity = 0; // Disable gravity while climbing
+					Grounded = false; // Temporarily set grounded to false to avoid jumping
+				}
+			}
+			else
+			{
+				if (!hit.collider.CompareTag("Climbable") && isClimbing)
+				{
+					Debug.Log("NOPE");
+					isClimbing = false; // Exit climbing when the player is no longer in contact with the ladder
+				}
+			}
+		}
+
+		/// <summary>
+		/// OnTriggerEnter is called when the Collider other enters the trigger.
+		/// </summary>
+		/// <param name="other">The other Collider involved in this collision.</param>
+		void OnTriggerEnter(Collider other)
+		{
+			if (other.CompareTag("NoClimb"))
+			{
+				isClimbing = false;
+				Grounded = true;
+			}
+		}
+
+		private void Climb()
+		{
+			// Get the input for climbing
+			float verticalInput = _input.move.y;
+			float horizontalInput = _input.move.x;
+
+			// Climbing movement logic
+			Vector3 climbMovement = new Vector3(0, verticalInput * ClimbSpeed, 0);
+
+			// Handle the transition at the top of the ladder
+			if (Grounded && verticalInput > 0)
+			{
+				// Move forward instead of up when at the top
+				Vector3 forwardMovement = transform.forward * MoveSpeed * Time.deltaTime;
+				_controller.Move(forwardMovement);
+				isClimbing = false; // Exit climbing mode
+				return;
+			}
+
+			// Allow climbing only while the ladder is detected
+			if (isClimbing)
+			{
+				_controller.Move(climbMovement * Time.deltaTime);
+			}
+
+			// Exit climbing if no input is provided or player moves away from ladder
+			if (verticalInput == 0 && horizontalInput == 0)
+			{
+				isClimbing = false;
+			}
 		}
 
 		private void LateUpdate()
@@ -124,6 +204,11 @@ namespace StarterAssets
 
 		private void GroundedCheck()
 		{
+			if (isClimbing)
+			{
+				Grounded = false;
+				return;
+			}
 			// set sphere position, with offset
 			Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
 			Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
@@ -153,6 +238,8 @@ namespace StarterAssets
 
 		private void Move()
 		{
+			if (isClimbing) return;
+
 			// set target speed based on move speed, sprint speed and if sprint is pressed
 			float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -200,6 +287,8 @@ namespace StarterAssets
 
 		private void JumpAndGravity()
 		{
+			if (isClimbing) return;
+
 			if (Grounded)
 			{
 				// reset the fall timeout timer

@@ -1,41 +1,61 @@
-using System.Collections;
 using UnityEngine;
 
 public class ClimbController : MonoBehaviour
 {
+    public float speed;        // Speed of climbing
+    private bool isClimbing = false;     // Tracks whether the player is climbing
 
-    public float speed;
-    public Rigidbody rb;
-    private bool inZone;
+    private CharacterController characterController; // CharacterController reference
+    private Vector3 climbDirection;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        inZone = false;
-        Debug.Log("HEER");
+        characterController = GetComponent<CharacterController>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (inZone && Input.GetButton("Up"))
+        if (isClimbing)
         {
-            rb.AddForce(transform.up * speed, ForceMode.Impulse);
+            Climb();
         }
     }
 
-    /// <summary>
-    /// OnCollisionEnter is called when this collider/rigidbody has begun
-    /// touching another rigidbody/collider.
-    /// </summary>
-    /// <param name="other">The Collision data associated with this collision.</param>
-    void OnCollisionEnter(Collision other)
+    // private void HandleClimbing()
+    // {
+    //     // Use the "move.y" input for climbing (W/S keys or Up/Down arrows)
+    //     if (_input.move.y > 0) // W is pressed
+    //     {
+    //         Vector3 climbMovement = Vector3.up * ClimbSpeed * Time.deltaTime;
+    //         _characterController.Move(climbMovement);
+    //     }
+    // }
+
+    private void Climb()
     {
-        if (other.gameObject.CompareTag("Climable"))
+        // Get vertical input (e.g., W to move up, S to move down)
+        float vertical = Input.GetAxis("Vertical");
+
+        // Calculate climbing direction (up/down along Y axis)
+        climbDirection = new Vector3(0, vertical * speed, 0);
+
+        // Move the player along the climb direction
+        characterController.Move(climbDirection * Time.deltaTime);
+
+        // Disable gravity while climbing
+        characterController.Move(Vector3.zero);
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        // Check if the player collides with a climbable object
+        if (hit.collider.CompareTag("Climbable"))
         {
-            Debug.Log("Detect");
-            inZone = true;
+            isClimbing = true;
+        }
+        else
+        {
+            isClimbing = false; // Exit climbing mode if no longer touching a climbable object
         }
     }
 }

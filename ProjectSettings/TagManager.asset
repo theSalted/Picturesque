@@ -6,7 +6,8 @@ TagManager:
   tags:
   - CinemachineTarget
   - Unplaceable
-  - Climable
+  - Climbable
+  - NoClimb
   layers:
   - Default
   - TransparentFX
