@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: fb6148bb4540c784dbf3a788215cbe7c
+timeCreated: 1519179659
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111787
+  packageName: Modular First Person Player
+  packageVersion: 1.0.2.7
+  assetPath: Assets/MFPP/Scripts/Editor/BaseEditor.cs
+  uploadId: 684870

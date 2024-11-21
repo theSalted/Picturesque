@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/MFPP/Scenes/Realistic Player Example.unity
+    path: Assets/Externals/MFPP/Scenes/Realistic Player Example.unity
     guid: 1b5cefb3faa9f5340a88ba974bd3e1f6
   - enabled: 0
-    path: Assets/MFPP/Scenes/Arcade Player Example.unity
+    path: Assets/Externals/MFPP/Scenes/Arcade Player Example.unity
     guid: 9d0222a9fd2867243b9fe441ea072935
   - enabled: 0
     path: Assets/MFPP/Scenes/Player Example 2.unity

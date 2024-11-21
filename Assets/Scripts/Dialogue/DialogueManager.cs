@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using StarterAssets;
+using PlayerInputSystem;
+
 
 public class DialogueManager : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Player References")]
     [SerializeField] private FirstPersonController firstPersonController;
-    [SerializeField] private StarterAssetsInputs playerInput;
+    [SerializeField] private PlayerInputs playerInput;
 
     private DialogueSO currentDialogue;
     private int currentDialogueIndex = 0;
