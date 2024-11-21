@@ -20,6 +20,40 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+		[SerializeField] private InputActionReference interactAction;
+        public bool interact = false;
+
+		private void OnEnable()
+        {
+            if (interactAction != null)
+            {
+                interactAction.action.performed += OnInteract;
+                interactAction.action.Enable();
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (interactAction != null)
+            {
+                interactAction.action.performed -= OnInteract;
+                interactAction.action.Disable();
+            }
+        }
+
+        private void OnInteract(InputAction.CallbackContext context)
+        {
+            interact = context.performed;
+        }
+
+		private void Update()
+        {
+            if (interact)
+            {
+                interact = false;
+            }
+        }
+
 #if ENABLE_INPUT_SYSTEM
 		public void OnMove(InputValue value)
 		{
