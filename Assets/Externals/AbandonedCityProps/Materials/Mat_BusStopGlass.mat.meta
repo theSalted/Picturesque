@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a5368523fa124424191a359e30d5756d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 208880
+  packageName: Abandoned City Props
+  packageVersion: 1.0
+  assetPath: Assets/AbandonedCityProps/Materials/Mat_BusStopGlass.mat
+  uploadId: 473186

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 3df0e035e17b11c4c9b54d56818840c2
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 208880
+  packageName: Abandoned City Props
+  packageVersion: 1.0
+  assetPath: Assets/AbandonedCityProps/Materials/Standard-DoubleSided.shader
+  uploadId: 473186

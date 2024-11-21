@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e8dbf3daf5e54034b84eddfc2f9b3faa
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 208880
+  packageName: Abandoned City Props
+  packageVersion: 1.0
+  assetPath: Assets/AbandonedCityProps/Materials/Mat_BusStop.mat
+  uploadId: 473186

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 145c9b4026bba2db3ba90b2663729db9
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 220577
+  packageName: Post Apocalyptic Roads and Highways
+  packageVersion: 1.2
+  assetPath: Assets/PostApocalypticRoads/Shaders/NeoStarShaderHDRP_v5.shadergraph
+  uploadId: 511970

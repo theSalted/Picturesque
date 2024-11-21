@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 242696875}
   - component: {fileID: 242696877}
   - component: {fileID: 242696878}
+  - component: {fileID: 242696879}
   m_Layer: 0
   m_Name: MagicalPainting
   m_TagString: Unplaceable
@@ -176,7 +177,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 4.8908677, y: 5.325691, z: 0.48296738}
   m_Center: {x: -0.29321837, y: 2.1628456, z: -2.3541727}
@@ -192,6 +193,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f5ca7915973dcf49b2e1da5c4424057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &242696879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 242696874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e17be8f5dbc1d485fb718a80e6f4fa48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isInteractable: 1
+  _isTrigger: 0
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  lerpSpeed: 10
+  neighborMovable: []
+  _isBeingMoved: 0
 --- !u!1 &255642537
 GameObject:
   m_ObjectHideFlags: 0
