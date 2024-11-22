@@ -41,6 +41,7 @@ public class Extractable : MonoBehaviour, Interactable
         if (outline == null) {
             outline = gameObject.AddComponent<Outline>();
         }
+        gameObject.AddComponent<ExtractableRespawnable>();
         outline.OutlineColor = new Color(0.4196f, 0.8706f, 0.4392f);
         outline.enabled = false;    
         collider.isTrigger = false;
@@ -65,7 +66,7 @@ public class Extractable : MonoBehaviour, Interactable
             movable.isBeingMoved = true;
             movable._isTrigger = _isTrigger;
             movable._layerMask = _layerMask;
-            gameObject.layer = LayerMask.NameToLayer("Overlay");
+            ChangeLayer("Overlay");
             // Disable the Extractable component
             // Remove the Extractable component
             Destroy(this);
@@ -79,7 +80,7 @@ public class Extractable : MonoBehaviour, Interactable
     public void OnStare() {
         // Since This is can be called via interface, thus bypassing rendering loop, we need to check if the component is enabled
         if (this.enabled) {
-            gameObject.layer = LayerMask.NameToLayer("Overlay");
+            ChangeLayer("Overlay");
             outline.enabled = true;
         }
         // collider.isTrigger = _isTrigger;
@@ -88,9 +89,18 @@ public class Extractable : MonoBehaviour, Interactable
     public void OnStareExit() {
         // Since This is can be called via interface, thus bypassing rendering loop, we need to check if the component is enabled
         if (this.enabled)  {
-            gameObject.layer = LayerMask.NameToLayer("Stencil");;
+            ChangeLayer("Stencil");;
             collider.isTrigger = true;
             outline.enabled = false;
         }
     } 
+
+    void ChangeLayer(string name)
+    {
+        gameObject.layer = LayerMask.NameToLayer(name);
+        foreach (Transform child in transform)
+        {
+            child.gameObject.layer = LayerMask.NameToLayer(name);
+        }
+    }
 }

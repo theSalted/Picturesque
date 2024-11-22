@@ -37,7 +37,7 @@ public class CutsceneManager : MonoBehaviour
         {
             playableDirector = GetComponent<PlayableDirector>();
         }
-        
+
         // Validate animator bindings
         for (int i = animatorBindings.Count - 1; i >= 0; i--)
         {
@@ -118,6 +118,8 @@ public class CutsceneManager : MonoBehaviour
                 playableDirector.SetGenericBinding(track, selectedAnimator);
             }
         }
+
+        selectedAnimator.SetBool("isRunning", true);
         
         playableDirector.Play();
         return true;

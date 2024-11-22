@@ -19,7 +19,6 @@ public class ObjectInteract : MonoBehaviour
     {
         if (playerInZone && Input.GetKeyDown(KeyCode.E))
         {
-            Debug.Log("Do something");
             TriggerCutscene();
         }
     }
@@ -28,7 +27,6 @@ public class ObjectInteract : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(cutsceneID))
         {
-            Debug.Log("HEREEE");
             CutsceneManager.Instance.PlayAnimatorByIdentifier(cutsceneID);
         }
         else

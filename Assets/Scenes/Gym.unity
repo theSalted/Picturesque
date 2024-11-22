@@ -1006,6 +1006,8 @@ MonoBehaviour:
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1
+  interactAction: {fileID: 0}
+  interact: 0
 --- !u!1 &2114283753834967212
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ public class DoorController : MonoBehaviour
     public Transform door;
     public bool isOpened = false; 
     // public bool key = false;
+    
 
     private Quaternion initialRotation;   // The original rotation of the door
     private Quaternion finalRotation;     // The final rotation of the door

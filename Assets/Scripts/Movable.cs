@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -61,6 +62,9 @@ public class Movable : MonoBehaviour, Interactable
         }
     }
 
+    private Transform playerTransform;
+    private Quaternion initialRotationOffset;
+
     void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
@@ -79,11 +83,14 @@ public class Movable : MonoBehaviour, Interactable
         originalLayer = gameObject.layer;
         originalColliderEnabled = collider.enabled;
         originalPosition = transform.position;
+
+        // Get the player's transform (assuming the player has the tag "Player")
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void OnEnable()
     {
-        InteractEnable();   
+        InteractEnable();
     }
 
     void OnDisable()
@@ -103,7 +110,6 @@ public class Movable : MonoBehaviour, Interactable
             if (PlaceableDetector.Instance.normal == Vector3.zero)
             {
                 // No valid hit, skip collision avoidance
-                PlaceableDetector.Instance.isPlaceable = false;
                 adjustedPosition = targetPosition;
             }
             else
@@ -115,10 +121,13 @@ public class Movable : MonoBehaviour, Interactable
             // Lerp towards the adjusted target position
             transform.position = Vector3.Lerp(transform.position, adjustedPosition, lerpSpeed * Time.deltaTime);
 
+            // Update the object's rotation to follow the player
+            transform.rotation = Quaternion.Lerp(transform.rotation, playerTransform.rotation * initialRotationOffset, lerpSpeed * Time.deltaTime);
+
             // Update the outline color based on the isPlaceable state
             if (PlaceableDetector.Instance.isPlaceable)
             {
-                outline.OutlineColor = new Color(0.4196f, 0.8706f, 0.4392f); // green color
+                outline.OutlineColor = new Color(0.4196f, 0.8706f, 0.4392f); // Green color
             }
             else
             {
@@ -127,7 +136,7 @@ public class Movable : MonoBehaviour, Interactable
         }
     }
 
-    public void OnInteractCallback(InputAction.CallbackContext context)
+    public virtual void OnInteractCallback(InputAction.CallbackContext context)
     {
         if (isBeingMoved && this.enabled)
         {
@@ -142,7 +151,7 @@ public class Movable : MonoBehaviour, Interactable
 
     public void OnStareEnter()
     {
-        
+        // Optional implementation
     }
 
     public void OnInteract()
@@ -154,22 +163,25 @@ public class Movable : MonoBehaviour, Interactable
         }
     }
 
-    public void OnStare() {
-        // Since This is can be called via interface, thus bypassing rendering loop, we need to check if the component is enabled
-        if (this.enabled && !isBeingMoved) {
+    public void OnStare()
+    {
+        // Since this can be called via interface, thus bypassing rendering loop, we need to check if the component is enabled
+        if (this.enabled && !isBeingMoved)
+        {
             outline.enabled = true;
         }
-        // collider.isTrigger = _isTrigger;
     }
-    
-    public void OnStareExit() {
-        // Since This is can be called via interface, thus bypassing rendering loop, we need to check if the component is enabled
-        if (this.enabled && !isBeingMoved)  {
+
+    public void OnStareExit()
+    {
+        // Since this can be called via interface, thus bypassing rendering loop, we need to check if the component is enabled
+        if (this.enabled && !isBeingMoved)
+        {
             outline.enabled = false;
         }
-    } 
+    }
 
-    private void StartMoving()
+    public virtual void StartMoving()
     {
         if (!isMovingInitialized)
         {
@@ -178,14 +190,13 @@ public class Movable : MonoBehaviour, Interactable
                 meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             }
             PlayerManager.Instance.inventory = gameObject;
-            gameObject.layer = LayerMask.NameToLayer("Overlay");
+            ChangeLayer("Overlay");
             outline.enabled = true;
             collider.isTrigger = true; // Set collider to trigger during movement
-            // Do not disable the collider to keep bounds valid
-            // collider.enabled = false; // This line is removed
             isMovingInitialized = true;
             Destroy(gameObject.GetComponent<FallingController>());
             InteractEnable();
+
             if (neighborMovable.Count > 0)
             {
                 foreach (Movable movable in neighborMovable)
@@ -193,24 +204,33 @@ public class Movable : MonoBehaviour, Interactable
                     movable.gameObject.AddComponent<FallingController>();
                 }
             }
+
+            // Compute the initial rotation offset
+            initialRotationOffset = Quaternion.Inverse(playerTransform.rotation) * transform.rotation;
         }
     }
 
-    private void StopMoving()
+    public virtual void StopMoving()
     {
-        if (meshRenderer != null) {
+        if (meshRenderer != null)
+        {
             meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
         }
         // Restore original states
         PlayerManager.Instance.inventory = null;
-        gameObject.layer = LayerMask.NameToLayer("Default");
+        ChangeLayer("Default");
         outline.OutlineColor = originalOutlineColor;
         outline.enabled = false;
         collider.isTrigger = false;
         collider.enabled = true;
         isMovingInitialized = false;
-        gameObject.AddComponent<FallingController>();
+        OnStopMoving();
         InteractDisable();
+    }
+
+    public virtual void OnStopMoving()
+    {
+        gameObject.AddComponent<FallingController>();
     }
 
     private Vector3 GetAdjustedPosition(Vector3 targetPosition)
@@ -255,16 +275,7 @@ public class Movable : MonoBehaviour, Interactable
                 iterations++;
             }
 
-            if (iterations >= maxIterations)
-            {
-                // Collision could not be avoided
-                PlaceableDetector.Instance.isPlaceable = false;
-            }
-            else
-            {
-                // Position is placeable
-                PlaceableDetector.Instance.isPlaceable = true;
-            }
+            PlaceableDetector.Instance.isPlaceable = true;
         }
 
         return targetPosition;
@@ -302,7 +313,7 @@ public class Movable : MonoBehaviour, Interactable
         interact.Disable();
     }
 
-    void OnDrawGizmos()
+    public virtual void OnDrawGizmos()
     {
         if (isBeingMoved)
         {
@@ -310,6 +321,15 @@ public class Movable : MonoBehaviour, Interactable
             Gizmos.color = Color.red;
             Vector3 objectSize = collider != null ? collider.bounds.size : Vector3.one;
             Gizmos.DrawWireCube(PlaceableDetector.Instance.placePosition, objectSize);
+        }
+    }
+
+    void ChangeLayer(string name)
+    {
+        gameObject.layer = LayerMask.NameToLayer(name);
+        foreach (Transform child in transform)
+        {
+            child.gameObject.layer = LayerMask.NameToLayer(name);
         }
     }
 

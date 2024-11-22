@@ -2,17 +2,47 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 public class PlayerManager : MonoBehaviour
 {
-    private GameObject _invetory;
+
+    public static event Action<GameObject> OnInventoryEvent;
+
+    [SerializeField]
+    private GameObject _inventory;
     public GameObject inventory
     {
-        get { return _invetory; }
-        set { 
-            _invetory = value; 
-            if (_invetory == null)
+        get { return _inventory; }
+        set {
+
+            if (_inventory == value) return;
+
+            if (_inventory != null)
+            {
+                InventoryUpdateable iu;
+                iu = _inventory.GetComponent<InventoryUpdateable>();
+                if (iu != null)
+                {
+                    iu.OnExitInventory(gameObject);
+                    OnInventoryEvent -= iu.OnInventoryUpdate;
+                }
+            }
+            
+            if (value != null)
+            {
+                InventoryUpdateable iu;
+                iu = value.GetComponent<InventoryUpdateable>();
+                if (iu != null)
+                {
+                    iu.OnEnterInventory(gameObject);
+                    OnInventoryEvent += iu.OnInventoryUpdate;
+                }
+            }
+
+            _inventory = value; 
+            if (_inventory == null)
             {
                 InteractableDetector.Instance.enabled = true;
             } else {
@@ -26,6 +56,11 @@ public class PlayerManager : MonoBehaviour
     private void Awake()
     {
         EnsureSingletonInstance();
+    }
+
+    void Update()
+    {
+        OnInventoryEvent?.Invoke(gameObject);
     }
 
     private void EnsureSingletonInstance()
