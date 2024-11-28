@@ -65,6 +65,9 @@ public class Movable : MonoBehaviour, Interactable
     private Transform playerTransform;
     private Quaternion initialRotationOffset;
 
+    // Add the new public Transform
+    public Transform overwriteTransform;
+
     void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
@@ -102,10 +105,13 @@ public class Movable : MonoBehaviour, Interactable
     {
         if (isBeingMoved)
         {
+            
+            
             Vector3 targetPosition = PlaceableDetector.Instance.placePosition;
 
             // Always move the object to the target position
             Vector3 adjustedPosition;
+            Quaternion adjustedRotation = playerTransform.rotation * initialRotationOffset;
 
             if (PlaceableDetector.Instance.normal == Vector3.zero)
             {
@@ -118,11 +124,19 @@ public class Movable : MonoBehaviour, Interactable
                 adjustedPosition = GetAdjustedPosition(targetPosition);
             }
 
+            if (overwriteTransform != null)
+            {
+                // Snap to overwriteTransform's position and rotation
+                adjustedPosition = overwriteTransform.position;
+                adjustedRotation = overwriteTransform.rotation;
+                Debug.Log("SnapController: Snapping to target");
+            }
+
             // Lerp towards the adjusted target position
             transform.position = Vector3.Lerp(transform.position, adjustedPosition, lerpSpeed * Time.deltaTime);
 
             // Update the object's rotation to follow the player
-            transform.rotation = Quaternion.Lerp(transform.rotation, playerTransform.rotation * initialRotationOffset, lerpSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(transform.rotation, adjustedRotation, lerpSpeed * Time.deltaTime);
 
             // Update the outline color based on the isPlaceable state
             if (PlaceableDetector.Instance.isPlaceable)
@@ -204,6 +218,7 @@ public class Movable : MonoBehaviour, Interactable
                     movable.gameObject.AddComponent<FallingController>();
                 }
             }
+            overwriteTransform = null; // Reset overwriteTransform when movement starts
 
             // Compute the initial rotation offset
             initialRotationOffset = Quaternion.Inverse(playerTransform.rotation) * transform.rotation;
@@ -226,6 +241,7 @@ public class Movable : MonoBehaviour, Interactable
         isMovingInitialized = false;
         OnStopMoving();
         InteractDisable();
+        overwriteTransform = null; // Reset overwriteTransform when movement stops
     }
 
     public virtual void OnStopMoving()

@@ -36,7 +36,12 @@ public class Extractable : MonoBehaviour, Interactable
     void Awake() {
         _layerMask = gameObject.layer;
         collider = GetComponent<Collider>();
-        _isTrigger = collider.isTrigger;
+        if (collider != null) {
+            _isTrigger = collider.isTrigger;
+            collider.isTrigger = false;
+        } else {
+            _isTrigger = false;
+        }
         outline = gameObject.GetComponent<Outline>();
         if (outline == null) {
             outline = gameObject.AddComponent<Outline>();
@@ -44,7 +49,6 @@ public class Extractable : MonoBehaviour, Interactable
         gameObject.AddComponent<ExtractableRespawnable>();
         outline.OutlineColor = new Color(0.4196f, 0.8706f, 0.4392f);
         outline.enabled = false;    
-        collider.isTrigger = false;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

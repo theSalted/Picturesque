@@ -3,25 +3,17 @@ using UnityEngine;
 
 
 public class PlaceableDetector : MonoBehaviour
-
 {
 
     public static PlaceableDetector Instance { get; private set; }
 
-
-
     private bool _isPlaceable = false;
 
-
-
     public bool isPlaceable
-
     {
-
         get { return _isPlaceable; }
 
         set
-
         {
 
             if (value != _isPlaceable)
@@ -51,17 +43,13 @@ public class PlaceableDetector : MonoBehaviour
 
 
     public string interactableLabel
-
     {
-
         get { return _interactableLabel; }
 
         set
-
         {
 
             if (value != _interactableLabel)
-
             {
 
                 _interactableLabel = value;
@@ -77,27 +65,20 @@ public class PlaceableDetector : MonoBehaviour
 
 
     void Awake()
-
     {
-
         EnsureSingletonInstance();
-
     }
 
 
 
     void OnEnable()
-
     {
-
         CameraRayController.OnRaycastEvent += OnRaycastReceived;
-
     }
 
 
 
     void OnDisable()
-
     {
 
         CameraRayController.OnRaycastEvent -= OnRaycastReceived;
@@ -107,19 +88,15 @@ public class PlaceableDetector : MonoBehaviour
 
 
     private void EnsureSingletonInstance()
-
     {
 
         if (Instance == null)
-
         {
 
             Instance = this;
 
         }
-
         else if (Instance != this)
-
         {
 
             Debug.LogError("Multiple instances of PlaceableDetector detected. Destroying duplicate.");
@@ -133,17 +110,13 @@ public class PlaceableDetector : MonoBehaviour
 
 
     private void OnRaycastReceived(Ray ray)
-
     {
-
         DetectPlaceable(ray);
-
     }
 
 
 
     private void DetectPlaceable(Ray ray)
-
     {
 
         int layerMask = ~LayerMask.GetMask("Overlay");
@@ -153,7 +126,6 @@ public class PlaceableDetector : MonoBehaviour
 
 
         if (Physics.Raycast(ray, out hitData, CameraRayController.Instance.rayLength, layerMask))
-
         {
 
             isPlaceable = true;
@@ -228,11 +200,9 @@ public class PlaceableDetector : MonoBehaviour
 
 
     private void UpdateReticleManager()
-
     {
 
         if (isPlaceable)
-
         {
 
             // ReticleManager.Instance.CurrentReticleState = ReticleManager.ReticleState.Interactive;
@@ -240,9 +210,7 @@ public class PlaceableDetector : MonoBehaviour
             ReticleManager.Instance.Label = interactableLabel;
 
         }
-
         else
-
         {
 
             // ReticleManager.Instance.CurrentReticleState = ReticleManager.ReticleState.Normal;

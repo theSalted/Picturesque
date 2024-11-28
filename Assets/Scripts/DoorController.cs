@@ -10,6 +10,8 @@ public class DoorController : MonoBehaviour
     public bool playerInZone = false;
     public Transform door;
     public bool isOpened = false; 
+    public GameObject warningText;
+    public PickUp pickUp;
     // public bool key = false;
     
 
@@ -25,6 +27,7 @@ public class DoorController : MonoBehaviour
         // Calculate the final rotation of the door (rotate 90 degrees on the Y-axis)
         finalRotation = Quaternion.Euler(0, targetRotationY, 0) * initialRotation;
         text.SetActive(false);
+        warningText.SetActive(false);
     }
 
     void Update()
@@ -32,8 +35,16 @@ public class DoorController : MonoBehaviour
         // Check if the player is in the trigger zone and the "O" key is pressed
         if (playerInZone && !isRotating && !isOpened && Input.GetKeyDown(KeyCode.E))
         {
-            text.SetActive(false);
-            StartCoroutine(RotateDoor());
+            if (pickUp.hasItem)
+            {
+                text.SetActive(false);
+                StartCoroutine(RotateDoor());
+            }
+            else
+            {
+                text.SetActive(false);
+                warningText.SetActive(true);
+            }
             // keyUI.SetActive(false);
         }
     }
@@ -54,6 +65,7 @@ public class DoorController : MonoBehaviour
         {
             text.SetActive(false);
             playerInZone = false;
+            warningText.SetActive(false);
         }
     }
 
