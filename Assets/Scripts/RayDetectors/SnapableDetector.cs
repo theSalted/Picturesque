@@ -37,6 +37,10 @@ public class SnapableDetector : MonoBehaviour
             if (snapable != null)
             {
                 Movable snapableTarget = snapable.target.GetComponent<Movable>();
+                if (snapableTarget == null)
+                {
+                    return;
+                }
                 if (snapableTarget.isBeingMoved && snapableTarget != null && snapableTarget.overwriteTransform == null)
                 {
                     Debug.Log("Add to snap");

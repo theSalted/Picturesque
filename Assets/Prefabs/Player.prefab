@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 180391112260050292}
   - component: {fileID: 8019157854257741731}
   - component: {fileID: 4707265512662759976}
+  - component: {fileID: 8410278725312285233}
   m_Layer: 0
   m_Name: PlayerCameraRoot
   m_TagString: CinemachineTarget
@@ -88,6 +89,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placePosition: {x: 0, y: 0, z: 0}
   normal: {x: 0, y: 0, z: 0}
+--- !u!114 &8410278725312285233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4135013735270702863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b9cac74063cc471f972260cdbde1284, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5393215578589016642
 GameObject:
   m_ObjectHideFlags: 0
