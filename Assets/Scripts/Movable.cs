@@ -107,13 +107,13 @@ public class Movable : MonoBehaviour, Interactable
         {
             
             
-            Vector3 targetPosition = PlaceableDetector.Instance.placePosition;
+            Vector3 targetPosition = MovableDetector.Instance.placePosition;
 
             // Always move the object to the target position
             Vector3 adjustedPosition;
             Quaternion adjustedRotation = playerTransform.rotation * initialRotationOffset;
 
-            if (PlaceableDetector.Instance.normal == Vector3.zero)
+            if (MovableDetector.Instance.normal == Vector3.zero)
             {
                 // No valid hit, skip collision avoidance
                 adjustedPosition = targetPosition;
@@ -139,7 +139,7 @@ public class Movable : MonoBehaviour, Interactable
             transform.rotation = Quaternion.Lerp(transform.rotation, adjustedRotation, lerpSpeed * Time.deltaTime);
 
             // Update the outline color based on the isPlaceable state
-            if (PlaceableDetector.Instance.isPlaceable)
+            if (MovableDetector.Instance.isPlaceable)
             {
                 outline.OutlineColor = new Color(0.4196f, 0.8706f, 0.4392f); // Green color
             }
@@ -155,7 +155,7 @@ public class Movable : MonoBehaviour, Interactable
         if (isBeingMoved && this.enabled)
         {
             // Try to place the object
-            if (PlaceableDetector.Instance.isPlaceable)
+            if (MovableDetector.Instance.isPlaceable)
             {
                 // Place the object and stop moving
                 isBeingMoved = false;
@@ -255,7 +255,7 @@ public class Movable : MonoBehaviour, Interactable
         if (objectCollider != null)
         {
             // Get the normal of the hit surface
-            Vector3 surfaceNormal = PlaceableDetector.Instance.normal;
+            Vector3 surfaceNormal = MovableDetector.Instance.normal;
 
             if (surfaceNormal == Vector3.zero)
             {
@@ -280,7 +280,7 @@ public class Movable : MonoBehaviour, Interactable
 
             Vector3 objectSize = objectCollider.bounds.size;
             Vector3 halfSize = objectSize / 2f;
-            int maxIterations = 10; // Maximum number of adjustments
+            int maxIterations = 5; // Maximum number of adjustments
             int iterations = 0;
             float checkDistance = 0.1f; // Distance to move along normal each iteration
 
@@ -291,7 +291,9 @@ public class Movable : MonoBehaviour, Interactable
                 iterations++;
             }
 
-            PlaceableDetector.Instance.isPlaceable = true;
+            // If the object is still colliding, set isPlaceable to false
+
+            MovableDetector.Instance.isPlaceable = true;
         }
 
         return targetPosition;
@@ -336,11 +338,11 @@ public class Movable : MonoBehaviour, Interactable
             // Optional: Draw a gizmo to show where the overlap box is checking
             Gizmos.color = Color.red;
             Vector3 objectSize = collider != null ? collider.bounds.size : Vector3.one;
-            Gizmos.DrawWireCube(PlaceableDetector.Instance.placePosition, objectSize);
+            Gizmos.DrawWireCube(MovableDetector.Instance.placePosition, objectSize);
         }
     }
 
-    void ChangeLayer(string name)
+    public void ChangeLayer(string name)
     {
         gameObject.layer = LayerMask.NameToLayer(name);
         foreach (Transform child in transform)

@@ -31,17 +31,17 @@ public class ChestOpen : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (pickUp.hasItem)
-            {
-                anim.SetBool("isOpen", true);
-                pickUp.itemUI.SetActive(false);
-                obj.SetActive(true); 
-                Destroy(this.GetComponent<BoxCollider>());
-            }
-            else
-            {
-                warningText.SetActive(true);
-            }
+            // if (pickUp.hasItem)
+            // {
+            //     anim.SetBool("isOpen", true);
+            //     pickUp.itemUI.SetActive(false);
+            //     obj.SetActive(true); 
+            //     Destroy(this.GetComponent<BoxCollider>());
+            // }
+            // else
+            // {
+            //     warningText.SetActive(true);
+            // }
         }
     }
 

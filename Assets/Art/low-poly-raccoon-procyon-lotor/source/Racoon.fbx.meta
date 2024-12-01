@@ -3,7 +3,12 @@ guid: dbfb2532736474d04bc7f5ad98487744
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Racoon
+    second: {fileID: 2100000, guid: 6e3a02f2fae70492795b6da5cbf20482, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -17,55 +22,7 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'Racoon_Idle' has import animation warnings
-      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'Chest_M' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'frontKnee_L' has translation
-      animation that will be discarded.\n\t'frontAnkle_L' has translation animation
-      that will be discarded.\n\t'frontToes1_L' has translation animation that will
-      be discarded.\n\t'frontToes2_L' has translation animation that will be discarded.\n\t'frontToes3_L'
-      has translation animation that will be discarded.\n\t'frontKnee_R' has translation
-      animation that will be discarded.\n\t'frontAnkle_R' has translation animation
-      that will be discarded.\n\t'frontToes1_R' has translation animation that will
-      be discarded.\n\t'frontToes2_R' has translation animation that will be discarded.\n\t'frontToes3_R'
-      has translation animation that will be discarded.\n\t'Neck1_M' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'Head_M'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'Racoon_StandUp' has import animation warnings that might lower retargeting
-      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'Chest_M'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'frontKnee_L'
-      has translation animation that will be discarded.\n\t'frontAnkle_L' has translation
-      animation that will be discarded.\n\t'frontToes1_L' has translation animation
-      that will be discarded.\n\t'frontToes2_L' has translation animation that will
-      be discarded.\n\t'frontToes3_L' has translation animation that will be discarded.\n\t'frontKnee_R'
-      has translation animation that will be discarded.\n\t'frontAnkle_R' has translation
-      animation that will be discarded.\n\t'frontToes1_R' has translation animation
-      that will be discarded.\n\t'frontToes2_R' has translation animation that will
-      be discarded.\n\t'frontToes3_R' has translation animation that will be discarded.\n\t'Head_M'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'Racoon_Walk' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'Spine1_M'
-      has translation animation that will be discarded.\n\t'Chest_M' has translation
-      animation that will be discarded.\n\t'Chest_M' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'Head_M' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'Racoon_Quadruped' has import animation warnings that might lower retargeting
-      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'Chest_M'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'frontKnee_L'
-      has translation animation that will be discarded.\n\t'frontAnkle_L' has translation
-      animation that will be discarded.\n\t'frontToes1_L' has translation animation
-      that will be discarded.\n\t'frontToes2_L' has translation animation that will
-      be discarded.\n\t'frontToes3_L' has translation animation that will be discarded.\n\t'frontKnee_R'
-      has translation animation that will be discarded.\n\t'frontAnkle_R' has translation
-      animation that will be discarded.\n\t'frontToes1_R' has translation animation
-      that will be discarded.\n\t'frontToes2_R' has translation animation that will
-      be discarded.\n\t'frontToes3_R' has translation animation that will be discarded.\n\t'Head_M'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'Racoon_StandUp-Idle' has import animation warnings that might lower retargeting
-      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'Chest_M'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'Neck1_M'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'Head_M'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n"
+    animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0

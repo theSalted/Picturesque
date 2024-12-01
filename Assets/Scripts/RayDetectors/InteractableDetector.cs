@@ -84,6 +84,8 @@ public class InteractableDetector : MonoBehaviour
     private void DetectInteractable(Ray ray)
     {
         if (!enabled) { return; }
+
+        // int layerMask = ~LayerMask.GetMask("Overlay", "Ignore Raycast");
         
         RaycastHit hitData;
         if (Physics.Raycast(ray, out hitData, CameraRayController.Instance.rayLength))
@@ -142,6 +144,8 @@ public class InteractableDetector : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         RaycastHit hitData;
+
+        // int layerMask = ~LayerMask.GetMask("Overlay", "Ignore Raycast");
 
         if (Physics.Raycast(ray, out hitData, CameraRayController.Instance.rayLength))
         {
