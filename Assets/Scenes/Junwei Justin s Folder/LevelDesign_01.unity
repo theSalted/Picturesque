@@ -78695,26 +78695,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114118330808558286, guid: c4850768f41cd124c83f5785253d4aca,
-        type: 3}
-      propertyPath: movementSettings.jumpSettings.power
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 114400090705472168, guid: c4850768f41cd124c83f5785253d4aca,
-        type: 3}
-      propertyPath: MaxPickupMass
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 114650538669989582, guid: c4850768f41cd124c83f5785253d4aca,
-        type: 3}
-      propertyPath: BobX.m_RotationOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 114650538669989582, guid: c4850768f41cd124c83f5785253d4aca,
-        type: 3}
-      propertyPath: BobY.m_RotationOrder
-      value: 4
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

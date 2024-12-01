@@ -165,7 +165,7 @@ MonoBehaviour:
     jumpSettings:
       allowJump: 1
       autoJump: 1
-      power: 3
+      power: 4
     sprintSettings:
       allowSprint: 1
       speedMultiplier: 2
@@ -264,7 +264,7 @@ MonoBehaviour:
   enabled: 1
   executionOrder: 0
   MaxPickupDistance: 2
-  MaxPickupMass: 5
+  MaxPickupMass: 20
   MoveForce: 5
   PickUpButton: Pick Up
 --- !u!114 &114964463929440048

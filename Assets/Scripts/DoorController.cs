@@ -5,13 +5,14 @@ public class DoorController : MonoBehaviour, Interactable
 {
     public float rotationDuration; // Duration of rotation in seconds
     public float targetRotationY; // Target Y rotation angle
-    public bool isRotating = false;      // To check if the door is already rotating
-    public GameObject text;
+    // public bool isRotating = false;      // To check if the door is already rotating
+    // public GameObject text;
     public bool playerInZone = false;
     public Transform door;
     public bool isOpened = false; 
     // public GameObject warningText;
     public GameObject unlockItem = null;
+    public Transform snapPoint = null;
     // public bool key = false;
     private Quaternion initialRotation;   // The original rotation of the door
     private Quaternion finalRotation;     // The final rotation of the door
@@ -74,20 +75,20 @@ public class DoorController : MonoBehaviour, Interactable
         initialRotation = door.rotation;
         // Calculate the final rotation of the door (rotate 90 degrees on the Y-axis)
         finalRotation = Quaternion.Euler(0, targetRotationY, 0) * initialRotation;
-        text.SetActive(false);
+        // text.SetActive(false);
         // warningText.SetActive(false);
     }
 
     public void OnInteract()
     {
-        if (isInteractable)
+        if (isInteractable && unlockItem == null && !isOpened)
         {
-            text.SetActive(false);
+            // text.SetActive(false);
             StartCoroutine(RotateDoor());
         }
         else
         {
-            text.SetActive(false);
+            // text.SetActive(false);
             // warningText.SetActive(true);
         }
     }
@@ -107,6 +108,35 @@ public class DoorController : MonoBehaviour, Interactable
         if (this.enabled)
         {
             outline.enabled = false;
+        }
+    }
+
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject == unlockItem && !isOpened)
+        {
+            // text.SetActive(true);
+            if (snapPoint != null) {
+                unlockItem.transform.position = snapPoint.position;
+                unlockItem.transform.rotation = snapPoint.rotation;
+                unlockItem.transform.SetParent(snapPoint);
+                
+                Movable movable = unlockItem.GetComponent<Movable>();
+                if (movable != null) {
+                    movable.isBeingMoved = false;
+                    Destroy(movable);
+                }
+                Outline outline = unlockItem.GetComponent<Outline>();
+                if (outline != null) {
+                    outline.enabled = false;
+                    Destroy(outline);
+                }
+                FallingController fallingController = unlockItem.GetComponent<FallingController>();
+                if (fallingController != null) {
+                    Destroy(fallingController);
+                }
+            }
+            StartCoroutine(RotateDoor());
         }
     }
 
@@ -154,7 +184,8 @@ public class DoorController : MonoBehaviour, Interactable
 
     private IEnumerator RotateDoor()
     {
-        isRotating = true;
+        isOpened = true;
+        // isRotating = true;
         float timeElapsed = 0f;
 
         // Gradually rotate the door over the specified duration
@@ -167,9 +198,9 @@ public class DoorController : MonoBehaviour, Interactable
 
         // Ensure final rotation is exactly at target
         door.rotation = finalRotation;
-        isRotating = false;
+        // isRotating = false;
 
         isOpened = true;
-        text.SetActive(false);
+        // text.SetActive(false);
     }
 }

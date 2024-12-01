@@ -119,11 +119,9 @@ public class MovableDetector : MonoBehaviour
     private void DetectPlaceable(Ray ray)
     {
 
-        int layerMask = ~LayerMask.GetMask("Overlay");
+        int layerMask = ~LayerMask.GetMask("Overlay", "Placeable");
 
         RaycastHit hitData;
-
-
 
         if (Physics.Raycast(ray, out hitData, CameraRayController.Instance.rayLength, layerMask))
         // if (Physics.Raycast(ray, out hitData, CameraRayController.Instance.rayLength))
@@ -137,11 +135,7 @@ public class MovableDetector : MonoBehaviour
 
             Color debugColor = Color.blue;
 
-
-
             interactableLabel = "Place";
-
-
 
             if (hitData.collider.gameObject.CompareTag("Unplaceable"))
             {
@@ -152,15 +146,11 @@ public class MovableDetector : MonoBehaviour
 
                 normal = Vector3.zero;
 
-
-
                 interactableLabel = "Can't Place Here";
 
                 debugColor = Color.black;
 
             }
-
-
 
             // Draw debug visuals...
 
@@ -195,7 +185,6 @@ public class MovableDetector : MonoBehaviour
             ReticleManager.Instance.Label = "";
 
         }
-
     }
 
 

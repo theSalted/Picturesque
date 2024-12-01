@@ -30,10 +30,11 @@ Shader "Custom/MoebiusGradientShader"
             #pragma vertex vert
             #pragma fragment frag
 
-            // Ensure shadow-related keywords are included
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
-            #pragma multi_compile _ _SHADOWS_SOFT
+            // Remove shadow-related preprocessor directives
+            // Removed:
+            // #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
+            // #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
+            // #pragma multi_compile _ _SHADOWS_SOFT
 
             #pragma multi_compile _ _ADDITIONAL_LIGHTS
             #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
@@ -41,7 +42,7 @@ Shader "Custom/MoebiusGradientShader"
             // Include necessary shader libraries
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
+            //#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl" // Removed
 
             struct Attributes
             {
@@ -57,7 +58,7 @@ Shader "Custom/MoebiusGradientShader"
                 float3 normalWS   : TEXCOORD1;
                 float3 viewDirWS  : TEXCOORD2;
                 float3 worldPosWS : TEXCOORD3;
-                float4 shadowCoord : TEXCOORD4; // For shadow mapping
+                // Removed shadowCoord
             };
 
             // Texture and sampler declarations
@@ -87,14 +88,17 @@ Shader "Custom/MoebiusGradientShader"
                 OUT.viewDirWS = GetCameraPositionWS() - worldPos;
                 OUT.worldPosWS = worldPos;
 
-                // Calculate shadow coordinates
+                // Removed shadow coordinate calculation
+                /*
                 #if defined(_MAIN_LIGHT_SHADOWS)
-                    OUT.shadowCoord = GetMainLightShadowCoord(worldPos);
+                    OUT.shadowCoord = GetShadowCoordFromWorldPos(worldPos);
                 #endif
+                */
 
                 return OUT;
             }
 
+            // Function to apply brightness and contrast adjustments
             float4 ApplyBrightnessContrast(float4 color)
             {
                 color.rgb = (color.rgb - 0.5) * _Contrast + 0.5;
@@ -114,23 +118,17 @@ Shader "Custom/MoebiusGradientShader"
                 float3 normalWS = normalize(IN.normalWS);
                 float3 viewDirWS = normalize(IN.viewDirWS);
 
-                // Calculate main light
-                Light mainLight = GetMainLight();
-                float3 lightDir = normalize(-mainLight.direction);
+                // Define a fixed light direction (e.g., coming from the top-right)
+                float3 lightDir = normalize(float3(0.5, 1.0, 0.5)); // Adjust as needed
+
                 float NdotL = saturate(dot(normalWS, lightDir));
 
-                // Compute shadow attenuation
-                float shadowAttenuation = 1.0;
-
-                #if defined(_MAIN_LIGHT_SHADOWS)
-                    shadowAttenuation = MainLightRealtimeShadow(IN.shadowCoord);
-                #endif
-
-                // Adjust NdotL by shadow attenuation
-                float shadowedNdotL = NdotL * shadowAttenuation;
+                // Since we're not handling shadows, shadowedNdotL is just NdotL
+                float shadowedNdotL = NdotL;
 
                 // Edge detection
                 float edge = dot(normalWS, viewDirWS);
+                edge = max(edge, 0.0); // Ensure edge is non-negative to avoid pow issues
                 edge = pow(edge, _EdgeSensitivity);
                 float edgeFactor = step(0.1, edge);
 
@@ -175,5 +173,4 @@ Shader "Custom/MoebiusGradientShader"
         }
     }
     Fallback "Universal Render Pipeline/Lit"
-
 }

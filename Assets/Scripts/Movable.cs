@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class Movable : MonoBehaviour, Interactable
 {
@@ -15,12 +17,15 @@ public class Movable : MonoBehaviour, Interactable
     public bool _isTrigger;
     [HideInInspector]
     public LayerMask _layerMask;
+    [HideInInspector]
+    public Vector3 avoidanceFlags = Vector3.zero; // New: 0 allows both directions, -1 disallows negative, +1 disallows positive
 
     private Color originalOutlineColor;
     private bool originalColliderTrigger;
     private int originalLayer;
     private bool originalColliderEnabled;
     private Vector3 originalPosition;
+    private Vector3 offset;
 
     private bool isMovingInitialized = false;
     public InputSystemActions playerInputs;
@@ -89,6 +94,8 @@ public class Movable : MonoBehaviour, Interactable
 
         // Get the player's transform (assuming the player has the tag "Player")
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        Vector3 meshCenter = CalculateMeshCenter();
+        offset = transform.position - meshCenter;
     }
 
     void OnEnable()
@@ -105,8 +112,6 @@ public class Movable : MonoBehaviour, Interactable
     {
         if (isBeingMoved)
         {
-            
-            
             Vector3 targetPosition = MovableDetector.Instance.placePosition;
 
             // Always move the object to the target position
@@ -115,7 +120,6 @@ public class Movable : MonoBehaviour, Interactable
 
             if (MovableDetector.Instance.normal == Vector3.zero)
             {
-                // No valid hit, skip collision avoidance
                 adjustedPosition = targetPosition;
             }
             else
@@ -129,13 +133,18 @@ public class Movable : MonoBehaviour, Interactable
                 // Snap to overwriteTransform's position and rotation
                 adjustedPosition = overwriteTransform.position;
                 adjustedRotation = overwriteTransform.rotation;
-                Debug.Log("SnapController: Snapping to target");
+                Vector3 overridePosition = overwriteTransform.position;
+                if (Vector3.Distance(transform.position, overridePosition) < 0.1f)
+                {
+                    MovableDetector.Instance.isPlaceable = true;
+                }
+                Debug.Log("SnapController: Snapping to target");   
             }
 
             // Lerp towards the adjusted target position
             transform.position = Vector3.Lerp(transform.position, adjustedPosition, lerpSpeed * Time.deltaTime);
 
-            // Update the object's rotation to follow the player
+            // Update the object's rotation to follow the player 
             transform.rotation = Quaternion.Lerp(transform.rotation, adjustedRotation, lerpSpeed * Time.deltaTime);
 
             // Update the outline color based on the isPlaceable state
@@ -260,11 +269,22 @@ public class Movable : MonoBehaviour, Interactable
             if (surfaceNormal == Vector3.zero)
             {
                 // No valid surface normal, skip collision avoidance
+                MovableDetector.Instance.isPlaceable = false;
                 return targetPosition;
             }
 
             // Ensure the normal is normalized
             surfaceNormal = surfaceNormal.normalized;
+
+            // Apply avoidance flags
+            if (!IsDirectionAllowed(surfaceNormal))
+            {
+                // Modify the normal based on avoidance flags
+                surfaceNormal = AdjustNormalBasedOnAvoidance(surfaceNormal);
+            }
+
+            // Draw the surface normal
+            Debug.DrawRay(targetPosition, surfaceNormal, Color.magenta);
 
             // Get the collider's bounds extents
             Vector3 boundsExtents = objectCollider.bounds.extents;
@@ -280,11 +300,11 @@ public class Movable : MonoBehaviour, Interactable
 
             Vector3 objectSize = objectCollider.bounds.size;
             Vector3 halfSize = objectSize / 2f;
-            int maxIterations = 5; // Maximum number of adjustments
+            int maxIterations = 10; // Maximum number of adjustments
             int iterations = 0;
             float checkDistance = 0.1f; // Distance to move along normal each iteration
 
-            while (IsColliding(targetPosition, halfSize) && iterations < maxIterations)
+            while (IsColliding(targetPosition - offset, halfSize) && iterations < maxIterations)
             {
                 // Move the target position along the normal by checkDistance
                 targetPosition += surfaceNormal * checkDistance;
@@ -292,11 +312,97 @@ public class Movable : MonoBehaviour, Interactable
             }
 
             // If the object is still colliding, set isPlaceable to false
+            if (IsColliding(targetPosition, halfSize))
+            {
+                // Perform another check with a small tolerance
+                Vector3 smallHalfSize = halfSize * 0.9f;
 
-            MovableDetector.Instance.isPlaceable = true;
+                // Allow placement if the object is near overrideTransform
+
+                if (IsColliding(targetPosition, smallHalfSize))
+                {
+                    MovableDetector.Instance.isPlaceable = false;
+                }
+                else
+                {
+                    MovableDetector.Instance.isPlaceable = true;
+                }
+            }
+            else
+            {
+                MovableDetector.Instance.isPlaceable = true;
+            }
         }
 
-        return targetPosition;
+        // Determine whether to add or subtract the offset based on orientation
+        float upDot = Vector3.Dot(transform.up, Vector3.up);
+        Vector3 finalPosition = upDot >= 0 ? targetPosition + offset : targetPosition - offset;
+        // Vector3 finalPosition = targetPosition + offset;
+        // Optional: Add debug log
+        // Debug.Log($"Object orientation upDot: {upDot}. Final Position: {finalPosition}");
+
+        return finalPosition;
+}
+
+    /// <summary>
+    /// Checks if the movement direction based on the surface normal is allowed.
+    /// </summary>
+    /// <param name="normal">The surface normal.</param>
+    /// <returns>True if allowed, false otherwise.</returns>
+    private bool IsDirectionAllowed(Vector3 normal)
+    {
+        // Check each axis based on avoidanceFlags
+        if (normal.x < 0 && avoidanceFlags.x == -1)
+            return false;
+        if (normal.x > 0 && avoidanceFlags.x == 1)
+            return false;
+
+        if (normal.y < 0 && avoidanceFlags.y == -1)
+            return false;
+        if (normal.y > 0 && avoidanceFlags.y == 1)
+            return false;
+
+        if (normal.z < 0 && avoidanceFlags.z == -1)
+            return false;
+        if (normal.z > 0 && avoidanceFlags.z == 1)
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Adjusts the surface normal based on the avoidance flags.
+    /// Disallows movement in specified directions by zeroing out the corresponding component.
+    /// </summary>
+    /// <param name="normal">The original surface normal.</param>
+    /// <returns>The adjusted surface normal.</returns>
+    private Vector3 AdjustNormalBasedOnAvoidance(Vector3 normal)
+    {
+        Vector3 adjustedNormal = normal;
+
+        // Zero out the components based on avoidanceFlags
+        if (normal.x < 0 && avoidanceFlags.x == -1)
+            adjustedNormal.x = 0;
+        if (normal.x > 0 && avoidanceFlags.x == 1)
+            adjustedNormal.x = 0;
+
+        if (normal.y < 0 && avoidanceFlags.y == -1)
+            adjustedNormal.y = 0;
+        if (normal.y > 0 && avoidanceFlags.y == 1)
+            adjustedNormal.y = 0;
+
+        if (normal.z < 0 && avoidanceFlags.z == -1)
+            adjustedNormal.z = 0;
+        if (normal.z > 0 && avoidanceFlags.z == 1)
+            adjustedNormal.z = 0;
+
+        // Normalize the adjusted normal to maintain direction
+        if (adjustedNormal != Vector3.zero)
+        {
+            adjustedNormal = adjustedNormal.normalized;
+        }
+
+        return adjustedNormal;
     }
 
     private bool IsColliding(Vector3 position, Vector3 halfSize)
@@ -307,7 +413,7 @@ public class Movable : MonoBehaviour, Interactable
         // Exclude this object's own collider
         foreach (Collider c in colliders)
         {
-            if (c != collider)
+            if (c != collider && !c.gameObject.CompareTag("AvoidanceIgnore"))
             {
                 return true;
             }
@@ -338,7 +444,7 @@ public class Movable : MonoBehaviour, Interactable
             // Optional: Draw a gizmo to show where the overlap box is checking
             Gizmos.color = Color.red;
             Vector3 objectSize = collider != null ? collider.bounds.size : Vector3.one;
-            Gizmos.DrawWireCube(MovableDetector.Instance.placePosition, objectSize);
+            Gizmos.DrawWireCube(MovableDetector.Instance.placePosition - offset, objectSize);
         }
     }
 
@@ -367,5 +473,19 @@ public class Movable : MonoBehaviour, Interactable
         {
             neighborMovable.Remove(movable);
         }
+    }
+
+    Vector3 CalculateMeshCenter()
+    {
+        Vector3 center = Vector3.zero;
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+
+        foreach (MeshFilter meshFilter in meshFilters)
+        {
+            center += meshFilter.transform.TransformPoint(meshFilter.mesh.bounds.center);
+        }
+
+        center /= meshFilters.Length;
+        return center;
     }
 }
